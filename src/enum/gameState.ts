@@ -4,7 +4,9 @@ enum GameState {
   Start,
   PlayerMove,
   EnemyMove,
-  Finished
+  PlayerWin,
+  EnemyWin,
+  Tie
 }
 
 export default GameState;

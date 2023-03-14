@@ -23,8 +23,8 @@ export default class BoardCell implements Drawable {
   get stateSign(): string {
     switch (this.state) {
       case CellState.Empty: return '_';
-      case CellState.Player: return 'o';
-      case CellState.Enemy: return '*';
+      case CellState.Player: return 'X';
+      case CellState.Enemy: return 'O';
     }
   }
 
@@ -43,7 +43,6 @@ export default class BoardCell implements Drawable {
     
     this.drawCellMask(ctx, this.position, this.cellSize, 75, ['rgb(0, 0, 128)', 'rgb(0, 0, 98)']);
   }
-
 
   private drawCellMask(ctx: CanvasRenderingContext2D, position: Vector2, size: number, circlePercent: number, colors: string[]) {
     this.drawBezierOvalQuarter(ctx, new Vector2(position.x, position.y), size / 2, circlePercent, 0, colors[0]);
