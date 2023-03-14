@@ -40,6 +40,12 @@ export default class BoardCell implements Drawable {
       ctx.fillStyle = this.state === CellState.Player ? 'yellow' : 'red';
       ctx.arc(this.position.x + this.cellSize / 2, this.position.y + this.cellSize / 2, this.cellSize / 2.5, 0, 2 * Math.PI);
       ctx.fill();
+      ctx.beginPath();
+      ctx.fillStyle = this.state === CellState.Player ? 'rgb(225, 225, 0)' : 'rgb(225, 0, 0)';
+      ctx.strokeStyle = this.state === CellState.Player ? 'rgb(255, 225, 0)' : 'rgb(225, 100, 100)';
+      ctx.arc(this.position.x + this.cellSize / 2, this.position.y + this.cellSize / 2, this.cellSize / 5, 0, 2 * Math.PI);
+      ctx.stroke();
+      ctx.fill();
       ctx.restore();
     }
     

@@ -59,14 +59,17 @@ export default class App {
         }, 300);
       }
       if (gameState === GameState.PlayerWin) {
+        this.board.arrow.visible = false;
         this.nextGameButton.text = 'gratulacje! zagramy jeszcze raz?';
         this.nextGameButton.show();
       }
       if (gameState === GameState.EnemyWin) {
+        this.board.arrow.visible = false;
         this.nextGameButton.text = 'porażka! zagramy jeszcze raz?';
         this.nextGameButton.show();
       }
       if (gameState === GameState.Tie) {
+        this.board.arrow.visible = false;
         this.nextGameButton.text = 'remis! zagramy jeszcze raz?';
         this.nextGameButton.show();
       }
