@@ -1,4 +1,4 @@
-import { randomInt } from "../utils/random";
+import { randomBoolean, randomInt } from "../utils/random";
 
 enum Scores {
   column = 12,
@@ -39,26 +39,40 @@ class BestMoveFinder {
     ], true);
   }
 
-  findBestMove(dataForFinder: string[][], firstMoveAI: boolean): number {
+  findBestMove(dataForFinder: string[][], firstMoveAI: boolean, level?: number): number {
+    if (!level) {
+      return this.findBestMoveEasy(dataForFinder, firstMoveAI);
+    }
+    else if (level === 1) {
+      return this.findBestMoveMedium(dataForFinder, firstMoveAI);
+    }
+    else if (level === 2) {
+      return this.findBestMoveHard(dataForFinder, firstMoveAI);
+    }
+  }
+
+  findBestMoveHard(dataForFinder: string[][], firstMoveAI: boolean): number {
+    return this.findBestMoveEasy(dataForFinder, firstMoveAI);
+  }
+
+  findBestMoveMedium(dataForFinder: string[][], firstMoveAI: boolean): number {
+    return this.findBestMoveEasy(dataForFinder, firstMoveAI);
+  }
+
+  findBestMoveEasy(dataForFinder: string[][], firstMoveAI: boolean): number {
     this.firstMoveAI = firstMoveAI ? Token.Enemy : Token.Player;
     this.dataForFinder = dataForFinder;
 
-    // this.logData();
-
-    let bestColumn: number;
-    let bestScore: number = -Infinity;
-
-    this.getValidColumns().forEach((column: number) => {
-      const score: number = this.scoreMove(column, Token.Enemy);
-      if(score > bestScore) {
-        bestScore = score;
-        bestColumn = column;
-      }
-    })
+    const columnScores = this.getValidColumns().map((column: number) => ({
+      column, 
+      score: this.scoreMove(column, Token.Enemy)
+    }));
+    columnScores.sort((a, b) => b.score - a.score);
 
     // this.logData();
-    
-    return bestColumn;
+    return randomBoolean() && columnScores.length > 1 && columnScores[1].score > 0 
+      ? columnScores[1].column
+      : columnScores[0].column
   }
 
   private scoreMove(column: number, token: Token): number {

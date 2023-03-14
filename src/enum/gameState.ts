@@ -1,5 +1,6 @@
 enum GameState {
   Init,
+  LevelChosen,
   Edit,
   Start,
   PlayerMove,

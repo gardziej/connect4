@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import { filter, takeUntil } from "rxjs/operators";
+import { filter, takeUntil, tap } from "rxjs/operators";
 import Clickable from "../interfaces/clickable.interface";
 import Drawable from "../interfaces/drawable.interface";
 import { mapMouseEventToPosition } from "../utils/rxjsHelpers";
@@ -12,13 +12,13 @@ export default class Button implements Drawable, Clickable {
   public clickable: boolean = false;
 
   public background: Rectangle;
-  public text: string = 'button';
   public visible: boolean = false;
 
   constructor(
     public position: Vector2,
     public width: number,
     public height: number,
+    public text?: string
   ) {
     this.background = new Rectangle(this.position, this.width, this.height);
     this.background.color = 'green';

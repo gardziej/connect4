@@ -1,6 +1,6 @@
 import Canvas from "./canvas";
 import { fromEvent } from "rxjs";
-import { filter, map, tap } from "rxjs/operators";
+import { auditTime, filter, map, tap } from "rxjs/operators";
 import Vector2 from "./vector2";
 import { Observable } from "rxjs/internal/Observable";
 
@@ -18,6 +18,7 @@ export default class Mouse {
   );
   public leftClick$: Observable<MouseEvent> = this.down$.pipe(
     filter((event: MouseEvent) => event.button === 0)
+
   );
   public leftUp$: Observable<MouseEvent> = this.up$.pipe(
     filter((event: MouseEvent) => event.button === 0)

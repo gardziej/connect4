@@ -35,10 +35,12 @@ export default class BoardCell implements Drawable {
   public render(ctx: CanvasRenderingContext2D): void {
     
     if (this.state !== CellState.Empty) {
+      ctx.save();
       ctx.beginPath();
       ctx.fillStyle = this.state === CellState.Player ? 'yellow' : 'red';
       ctx.arc(this.position.x + this.cellSize / 2, this.position.y + this.cellSize / 2, this.cellSize / 2.5, 0, 2 * Math.PI);
       ctx.fill();
+      ctx.restore();
     }
     
     this.drawCellMask(ctx, this.position, this.cellSize, 75, ['rgb(0, 0, 128)', 'rgb(0, 0, 98)']);

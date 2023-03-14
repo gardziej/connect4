@@ -9,14 +9,20 @@ import { randomBoolean } from "./utils/random";
 import CellState from "./enum/cellState";
 import bestMoveFinder from "./class/bestMoveFinder";
 import Button from "./class/button";
+import Header from "./class/header";
+import GameLevel from "./enum/gameLevel";
+import LevelButtons from "./class/levelButtons";
 
 export default class App {
   private fpsLimiter = new FpsLimiter(this);
   private canvas: Canvas = new Canvas('canvas');
-  public mouse: Mouse;
+  private mouse: Mouse;
   private children = new Map();
   private board: Board;
   private nextGameButton: Button;
+  private header: Header;
+  private levelButtons: LevelButtons;
+  public gameLevel: GameLevel;
   
   constructor() {
     this.mouse = new Mouse(this.canvas);
@@ -25,6 +31,13 @@ export default class App {
     gameStateManager.gameStateChanged$.subscribe((gameState: GameState) => {
       if (gameState === GameState.Init) {
         this.init();
+        gameStateManager.gameStateChanged$.next(GameState.LevelChosen);
+      }
+      if (gameState === GameState.LevelChosen) {
+        this.header.text = 'Wybierz poziom rozgrywki';
+        this.header.show();
+        this.nextGameButton.hide();
+        this.levelButtons.show();
       }
       if (gameState === GameState.Start) {
         this.reset();
@@ -38,7 +51,7 @@ export default class App {
       if (gameState === GameState.EnemyMove) {
         this.board.arrow.visible = false;
         setTimeout(() => {
-          const bestMoveColumn: number = bestMoveFinder.findBestMove(this.board.getDataForFinder(), this.board.firstMoveAI);
+          const bestMoveColumn: number = bestMoveFinder.findBestMove(this.board.getDataForFinder(), this.board.firstMoveAI, this.gameLevel);
           this.board.makeMove(bestMoveColumn, CellState.Enemy);
           if (gameStateManager.getCurrentGameState() === GameState.EnemyMove) {
             gameStateManager.gameStateChanged$.next(GameState.PlayerMove);
@@ -62,17 +75,24 @@ export default class App {
   }
 
   private reset(): void {
+    this.levelButtons.hide();
     this.nextGameButton.hide();
+    this.header.hide();
     this.board.reset();
   }
 
   private init(): void {
     this.initBoard();
     this.initNextGameButton();
-    gameStateManager.gameStateChanged$.next(GameState.Start);
-    // console.log('PRG: bestMoveFinder.trigger()', bestMoveFinder.trigger()); // TODO remove this
+    this.initHeader();
+    this.initLevelButtons();
   }
   
+  public start(gameLevel: GameLevel): void {
+    this.gameLevel = gameLevel;
+    gameStateManager.gameStateChanged$.next(GameState.Start);
+  }
+
   private initBoard(): void {
     const margin: number = 50;
     this.board = new Board(new Vector2(margin, margin), this.canvas.width - margin * 2, this.canvas.height - margin * 2, new Vector2(7, 6));
@@ -83,9 +103,23 @@ export default class App {
   private initNextGameButton(): void {
     this.nextGameButton = new Button(new Vector2(300, 100), 400, 40);
     this.nextGameButton.handleMouseInput(this.mouse, () => {
-      gameStateManager.gameStateChanged$.next(GameState.Start);
+      setTimeout(() => {
+        gameStateManager.gameStateChanged$.next(GameState.LevelChosen);
+      }, 200);
     });
     this.children.set('nextGameButton', this.nextGameButton);
+  }
+
+  private initHeader(): void {
+    this.header = new Header(new Vector2(50, 50), this.canvas.dim.x - 100, 50);
+    this.header.text = 'Wybierz poziom rozgrywki';
+    this.children.set('header', this.header);
+  }
+
+  private initLevelButtons(): void {
+    this.levelButtons = new LevelButtons(this, new Vector2(50, 100), this.canvas.dim.x - 100, 80);
+    this.levelButtons.handleMouseInput(this.mouse);
+    this.children.set('levelButtons', this.levelButtons);
   }
 
   public handleMouseInput(): void {
