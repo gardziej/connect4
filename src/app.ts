@@ -5,7 +5,7 @@ import Vector2 from "./class/vector2";
 import Board from "./class/board";
 import GameState from "./enum/gameState";
 import gameStateManager from "./class/gameStateManager";
-import { randomBoolean } from "./utils/random";
+import { randomBoolean, randomInt } from "./utils/random";
 import CellState from "./enum/cellState";
 import bestMoveFinder from "./class/bestMoveFinder";
 import Button from "./class/button";
@@ -47,8 +47,12 @@ export default class App {
       }
       if (gameState === GameState.PlayerMove) {
         this.board.arrow.visible = true;
+        this.header.text = "Twój ruch";
+        this.header.show();
       }
       if (gameState === GameState.EnemyMove) {
+        this.header.text = "Ruch przeciwnika";
+        this.header.show();
         this.board.arrow.visible = false;
         setTimeout(() => {
           const bestMoveColumn: number = bestMoveFinder.findBestMove(this.board.getDataForFinder(), this.board.firstMoveAI, this.gameLevel);
@@ -56,19 +60,22 @@ export default class App {
           if (gameStateManager.getCurrentGameState() === GameState.EnemyMove) {
             gameStateManager.gameStateChanged$.next(GameState.PlayerMove);
           }
-        }, 300);
+        }, randomInt(500, 1500));
       }
       if (gameState === GameState.PlayerWin) {
+        this.header.hide();
         this.board.arrow.visible = false;
         this.nextGameButton.text = 'gratulacje! zagramy jeszcze raz?';
         this.nextGameButton.show();
       }
       if (gameState === GameState.EnemyWin) {
+        this.header.hide();
         this.board.arrow.visible = false;
         this.nextGameButton.text = 'porażka! zagramy jeszcze raz?';
         this.nextGameButton.show();
       }
       if (gameState === GameState.Tie) {
+        this.header.hide();
         this.board.arrow.visible = false;
         this.nextGameButton.text = 'remis! zagramy jeszcze raz?';
         this.nextGameButton.show();

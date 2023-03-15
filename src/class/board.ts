@@ -18,6 +18,7 @@ export default class Board implements Drawable {
   private cells: BoardCell[][];
   public arrow: Arrow = new Arrow(new Vector2(this.position.x, this.position.y), this.cellSize, this.cellSize);
   public firstMoveAI: boolean;
+  public endCoords: Vector2[] = [];
 
   constructor(
     public position: Vector2,
@@ -35,6 +36,7 @@ export default class Board implements Drawable {
 
   public reset(): void {
     this.createCells();
+    this.endCoords = [];
   }
 
   public setFirstMove(firstGameState: GameState) {
@@ -68,7 +70,7 @@ export default class Board implements Drawable {
   };
 
   private setCellState(coords: Vector2, cellState: CellState): void {
-    this.getCellAtCoords(coords).state = cellState;
+    this.getCellAtCoords(coords).setCellState(cellState);
   }
 
   public handleMouseInput(mouse: Mouse): void {
@@ -105,7 +107,12 @@ export default class Board implements Drawable {
       row--;
     }
     this.setCellState(new Vector2(column, row), state);
-    if (this.checkForEndCondition()) {
+
+    const endCoords: Vector2[] = this.checkForEndCondition();
+    if (endCoords) {
+      setTimeout(() => {
+        this.endCoords.push(endCoords[0], endCoords[endCoords.length - 1]);
+      }, 1000);
       return false;
     }
 
@@ -116,57 +123,65 @@ export default class Board implements Drawable {
     return true;
   }
 
-  public checkForEndCondition(): boolean {
+  public checkForEndCondition(): Vector2[] {
     // No more moves
     if (this.noPossibleMove()) {
       gameStateManager.gameStateChanged$.next(GameState.Tie);
-      return true;
+      return [new Vector2(0, 0), new Vector2(this.dim.y - 1, this.dim.x - 1)];
     }
-    // Horizontal
+    // Vertical
     for (let j = 0; j < this.dim.y; j++) {
       for (let i = 0; i < this.dim.x - 3; i++) {
-        const test: CellState = this.testFourCells([this.cells[j][i].state, this.cells[j][i + 1].state,
-          this.cells[j][i + 2].state, this.cells[j][i + 3].state]);
+        const testWindow = [new Vector2(j, i), new Vector2(j, i + 1), new Vector2(j, i + 2), new Vector2(j, i + 3)];
+        const test: CellState = this.testFourCells(
+          testWindow.map((coords: Vector2) => this.cells[coords.x][coords.y].state)
+        );
         if (test) {
           gameStateManager.gameStateChanged$.next(test === CellState.Player ? GameState.PlayerWin : GameState.EnemyWin);
-          return true;
+          return testWindow;
         }
       }
     }
-    // Vertical
+    // Horizontal
     for (let j = 0; j < this.dim.y - 3; j++) {
       for (let i = 0; i < this.dim.x; i++) {
-        const test: CellState = this.testFourCells([this.cells[j][i].state, this.cells[j + 1][i].state,
-          this.cells[j + 2][i].state, this.cells[j + 3][i].state]);
+        const testWindow = [new Vector2(j, i), new Vector2(j + 1, i), new Vector2(j + 2, i), new Vector2(j + 3, i)];
+        const test: CellState = this.testFourCells(
+          testWindow.map((coords: Vector2) => this.cells[coords.x][coords.y].state)
+        );
         if (test) {
           gameStateManager.gameStateChanged$.next(test === CellState.Player ? GameState.PlayerWin : GameState.EnemyWin);
-          return true;
+          return testWindow;
         }
       }
     }
     // Diagonal down
     for (let j = 0; j < this.dim.y - 3; j++) {
       for (let i = 0; i < this.dim.x - 3; i++) {
-        const test: CellState = this.testFourCells([this.cells[j][i].state, this.cells[j + 1][i + 1].state,
-          this.cells[j + 2][i + 2].state, this.cells[j + 3][i + 3].state]);
+        const testWindow = [new Vector2(j, i), new Vector2(j + 1, i + 1), new Vector2(j + 2, i + 2), new Vector2(j + 3, i + 3)];
+        const test: CellState = this.testFourCells(
+          testWindow.map((coords: Vector2) => this.cells[coords.x][coords.y].state)
+        );
         if (test) {
           gameStateManager.gameStateChanged$.next(test === CellState.Player ? GameState.PlayerWin : GameState.EnemyWin);
-          return true;
+          return testWindow;
         }
       }
     }
     // Diagonal up
     for (let j = 3; j < this.dim.y; j++) {
       for (let i = 0; i < this.dim.x - 3; i++) {
-        const test: CellState = this.testFourCells([this.cells[j][i].state, this.cells[j - 1][i + 1].state,
-          this.cells[j - 2][i + 2].state, this.cells[j - 3][i + 3].state]);
+        const testWindow = [new Vector2(j, i), new Vector2(j - 1, i + 1), new Vector2(j - 2, i + 2), new Vector2(j - 3, i + 3)];
+        const test: CellState = this.testFourCells(
+          testWindow.map((coords: Vector2) => this.cells[coords.x][coords.y].state)
+        );
         if (test) {
           gameStateManager.gameStateChanged$.next(test === CellState.Player ? GameState.PlayerWin : GameState.EnemyWin);
-          return true;
+          return testWindow;
         }
       }
     }
-    return false;
+    return null;
   }
 
   private testFourCells(testCellStates: CellState[]): CellState {
@@ -193,9 +208,34 @@ export default class Board implements Drawable {
 
   public render(ctx: CanvasRenderingContext2D): void {
     this.background.render(ctx);
-    this.cells.flat().forEach(cell => cell.render(ctx));
+    this.cells.flat().forEach((cell: BoardCell) => cell.render(ctx));
+    this.cells.flat().forEach((cell: BoardCell) => {
+      this.drawCellMask(ctx, cell.position, cell.cellSize, 75, ['rgb(0, 0, 128)', 'rgb(0, 0, 98)']);
+    });
     this.arrow.render(ctx);
+    this.renderEndPosition(ctx);
   }
+
+  private renderEndPosition(ctx: CanvasRenderingContext2D) {
+    if (this.endCoords.length > 0) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.lineWidth = 10;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "green";
+      ctx.moveTo(
+        this.position.y + this.cellSize / 2 + this.endCoords[0].y * this.cellSize,
+        this.position.x + this.cellSize + this.cellSize / 2 + this.endCoords[0].x * this.cellSize
+        );
+      ctx.lineTo(
+        this.position.y + this.cellSize / 2 + this.endCoords[1].y * this.cellSize,
+        this.position.x + this.cellSize + this.cellSize / 2 + this.endCoords[1].x * this.cellSize
+      );
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
 
   private mapMousePositionToColumn() {
     return map((mousePosition: Vector2) => this.mousePositionToColumn(mousePosition));
@@ -216,6 +256,42 @@ export default class Board implements Drawable {
       console.log('DATA', index, row.join(' ')); // TODO remove this
     });
   }
+
+
+  private drawCellMask(ctx: CanvasRenderingContext2D, position: Vector2, size: number, circlePercent: number, colors: string[]) {
+    this.drawBezierOvalQuarter(ctx, new Vector2(position.x, position.y), size / 2, circlePercent, 0, colors[0]);
+    this.drawBezierOvalQuarter(ctx, new Vector2(position.x + size / 2, position.y), size / 2, circlePercent, 90, colors[1]);
+    this.drawBezierOvalQuarter(ctx, new Vector2(position.x + size / 2, position.y + size / 2), size / 2, circlePercent, 180, colors[0]);
+    this.drawBezierOvalQuarter(ctx, new Vector2(position.x, position.y + size / 2), size / 2, circlePercent, 270, colors[1]);
+  }
+
+  private drawBezierOvalQuarter(ctx: CanvasRenderingContext2D, position: Vector2, size: number, circlePercent: number, angle: number, color: string) {
+    const circleSize: number = size * circlePercent / 100;
+    const margin: number = size - circleSize;
+    ctx.save();
+    ctx.fillStyle = color;
+    if (angle) {
+      ctx.translate(position.x + size / 2, position.y + size / 2);
+      ctx.rotate(angle * Math.PI / 180);
+      ctx.translate(-position.x - size / 2, -position.y - size / 2);
+    }
+    ctx.beginPath();
+    const centerX: number = position.x + size;
+    const centerY: number = position.y + size;
+    const start: Vector2 = new Vector2(centerX - (circleSize), centerY - (0));
+    const cp1: Vector2 = new Vector2(centerX - (circleSize), centerY - (0.552 * circleSize));
+    const cp2: Vector2 = new Vector2(centerX - (0.552 * circleSize), centerY - (circleSize));
+    const end: Vector2 = new Vector2(centerX - (0), centerY - (circleSize));
+    ctx.moveTo(start.x, start.y);
+    ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
+    ctx.lineTo(position.x + size, position.y);
+    ctx.lineTo(position.x, position.y);
+    ctx.lineTo(position.x, position.y + size);
+    ctx.lineTo(position.x + margin, position.y + size);
+    ctx.fill();
+    ctx.restore();
+  }
+
 
   public destroy(): void {
     this.destroy$.next(true);
