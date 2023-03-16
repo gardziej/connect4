@@ -4,7 +4,6 @@ import App from "../app";
 import GameLevel from "../enum/gameLevel";
 import Drawable from "../interfaces/drawable.interface";
 import { mapMouseEventToPosition } from "../utils/rxjsHelpers";
-import Button from "./button";
 import LevelButton from "./levelButton";
 import Mouse from "./mouse";
 import Vector2 from "./vector2";
@@ -14,7 +13,8 @@ export default class LevelButtons implements Drawable {
   private buttons: LevelButton[];
   private buttonWidth: number = 150;
   private buttonHeight: number = 40;
-  constructor(
+  
+  public constructor(
     private app: App,
     public position: Vector2,
     public width: number,

@@ -24,7 +24,7 @@ export default class App {
   private levelButtons: LevelButtons;
   public gameLevel: GameLevel;
   
-  constructor() {
+  public constructor() {
     this.mouse = new Mouse(this.canvas);
     this.handleMouseInput();
 
@@ -60,7 +60,7 @@ export default class App {
           if (gameStateManager.getCurrentGameState() === GameState.EnemyMove) {
             gameStateManager.gameStateChanged$.next(GameState.PlayerMove);
           }
-        }, randomInt(500, 1500));
+        }, randomInt(500, 1200));
       }
       if (gameState === GameState.PlayerWin) {
         this.header.hide();

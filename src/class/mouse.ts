@@ -1,6 +1,6 @@
 import Canvas from "./canvas";
 import { fromEvent } from "rxjs";
-import { auditTime, filter, map, tap } from "rxjs/operators";
+import { filter, map, tap } from "rxjs/operators";
 import Vector2 from "./vector2";
 import { Observable } from "rxjs/internal/Observable";
 
@@ -27,7 +27,7 @@ export default class Mouse {
     filter((event: MouseEvent) => event.button === 2)
   );
 
-  constructor(public canvas: Canvas) {
+  public constructor(public canvas: Canvas) {
     this.canvas = canvas;
   }
 }

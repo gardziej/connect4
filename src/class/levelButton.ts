@@ -4,7 +4,7 @@ import Vector2 from "./vector2";
 
 export default class LevelButton extends Button {
 
-  constructor(
+  public constructor(
     public position: Vector2,
     public width: number,
     public height: number,

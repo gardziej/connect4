@@ -13,7 +13,7 @@ export default class Header implements Drawable, Clickable {
     return this.clickable && Rectangle.containsPoint(this, mousePosition);
   }
 
-  constructor(
+  public constructor(
     public position: Vector2,
     public width: number,
     public height: number,

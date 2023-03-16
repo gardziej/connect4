@@ -4,12 +4,11 @@ export default class FpsLimiter {
 
   private times: number[] = [];
   private fps: number;
+  private then = performance.now();
+  private interval = 1000 / 60;
+  private tolerance = 0.1;
 
-  then = performance.now();
-  interval = 1000 / 60;
-  tolerance = 0.1;
-
-  constructor(private app: App) {
+  public constructor(private app: App) {
     this.loop();
   }
 

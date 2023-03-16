@@ -1,5 +1,5 @@
-import { Subject } from "rxjs";
-import { takeUntil, filter, map, tap } from "rxjs/operators";
+import { OperatorFunction, Subject } from "rxjs";
+import { takeUntil, filter, map } from "rxjs/operators";
 import CellState from "../enum/cellState";
 import GameState from "../enum/gameState";
 import Drawable from "../interfaces/drawable.interface";
@@ -20,7 +20,7 @@ export default class Board implements Drawable {
   public firstMoveAI: boolean;
   public endCoords: Vector2[] = [];
 
-  constructor(
+  public constructor(
     public position: Vector2,
     public width: number,
     public height: number,
@@ -30,7 +30,7 @@ export default class Board implements Drawable {
     this.reset();
   }
 
-  get cellSize(): number {
+  public get cellSize(): number {
     return this.width / this.dim.x;
   }
 
@@ -39,7 +39,7 @@ export default class Board implements Drawable {
     this.endCoords = [];
   }
 
-  public setFirstMove(firstGameState: GameState) {
+  public setFirstMove(firstGameState: GameState): void {
     this.firstMoveAI = firstGameState === GameState.PlayerMove;
   }
 
@@ -65,9 +65,9 @@ export default class Board implements Drawable {
     }
   }
 
-  getCellAtCoords(coords: Vector2): BoardCell {
+  public getCellAtCoords(coords: Vector2): BoardCell {
     return this.cells[coords.y][coords.x];
-  };
+  }
 
   private setCellState(coords: Vector2, cellState: CellState): void {
     this.getCellAtCoords(coords).setCellState(cellState);
@@ -198,7 +198,7 @@ export default class Board implements Drawable {
     return this.cells[0].every((cell: BoardCell) => cell.state !== CellState.Empty);
   }
 
-  private hoverOverColumn(column: number) {
+  private hoverOverColumn(column: number): void {
     this.arrow.position = new Vector2(this.position.x + this.cellSize * column, this.position.y);
   }
 
@@ -216,7 +216,7 @@ export default class Board implements Drawable {
     this.renderEndPosition(ctx);
   }
 
-  private renderEndPosition(ctx: CanvasRenderingContext2D) {
+  private renderEndPosition(ctx: CanvasRenderingContext2D): void {
     if (this.endCoords.length > 0) {
       ctx.save();
       ctx.beginPath();
@@ -237,11 +237,11 @@ export default class Board implements Drawable {
   }
 
 
-  private mapMousePositionToColumn() {
+  private mapMousePositionToColumn(): OperatorFunction<Vector2, number> {
     return map((mousePosition: Vector2) => this.mousePositionToColumn(mousePosition));
   }
 
-  private mousePositionToColumn(mousePosition: Vector2) {
+  private mousePositionToColumn(mousePosition: Vector2): number {
     return Math.floor((mousePosition.x - this.position.x) / this.cellSize);
   }
 
@@ -249,23 +249,14 @@ export default class Board implements Drawable {
     return this.cells.map((row: BoardCell[]) => row.map((cell: BoardCell) => cell.stateSign));
   }
 
-  public logData(): void {
-    const cells: string[][] = this.getDataForFinder();
-    console.log('DATA   0 1 2 3 4 5 6'); // TODO remove this
-    cells.forEach((row: string[], index: number) => {
-      console.log('DATA', index, row.join(' ')); // TODO remove this
-    });
-  }
-
-
-  private drawCellMask(ctx: CanvasRenderingContext2D, position: Vector2, size: number, circlePercent: number, colors: string[]) {
+  private drawCellMask(ctx: CanvasRenderingContext2D, position: Vector2, size: number, circlePercent: number, colors: string[]): void {
     this.drawBezierOvalQuarter(ctx, new Vector2(position.x, position.y), size / 2, circlePercent, 0, colors[0]);
     this.drawBezierOvalQuarter(ctx, new Vector2(position.x + size / 2, position.y), size / 2, circlePercent, 90, colors[1]);
     this.drawBezierOvalQuarter(ctx, new Vector2(position.x + size / 2, position.y + size / 2), size / 2, circlePercent, 180, colors[0]);
     this.drawBezierOvalQuarter(ctx, new Vector2(position.x, position.y + size / 2), size / 2, circlePercent, 270, colors[1]);
   }
 
-  private drawBezierOvalQuarter(ctx: CanvasRenderingContext2D, position: Vector2, size: number, circlePercent: number, angle: number, color: string) {
+  private drawBezierOvalQuarter(ctx: CanvasRenderingContext2D, position: Vector2, size: number, circlePercent: number, angle: number, color: string): void {
     const circleSize: number = size * circlePercent / 100;
     const margin: number = size - circleSize;
     ctx.save();

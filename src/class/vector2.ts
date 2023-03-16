@@ -5,10 +5,10 @@ export default class Vector2 {
   public x: number;
   public y: number;
 
-  constructor()
-  constructor(v: Vector2)
-  constructor(x: number, y: number)
-  constructor(a?: any, b?: any) {
+  public constructor()
+  public constructor(v: Vector2)
+  public constructor(x: number, y: number)
+  public constructor(a?: any, b?: any) {
     if (a instanceof Vector2 && typeof b === 'undefined') {
       this.x = a.x;
       this.y = a.y;
@@ -19,21 +19,21 @@ export default class Vector2 {
     }
   }
 
-  static get zero(): Vector2 {
+  public static get zero(): Vector2 {
     return new Vector2();
   }
 
-  get isZero(): boolean {
+  public get isZero(): boolean {
     return this.x === 0 && this.y === 0;
   }
 
-  get length(): number {
+  public get length(): number {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
-  addTo(v: Vector2): Vector2
-  addTo(n: number): Vector2
-  addTo(a: any): Vector2 {
+  public addTo(v: Vector2): Vector2
+  public addTo(n: number): Vector2
+  public addTo(a: any): Vector2 {
     if (a instanceof Vector2) {
       this.x += a.x;
       this.y += a.y;
@@ -45,15 +45,15 @@ export default class Vector2 {
     return this;
   }
 
-  add(v: Vector2): Vector2
-  add(n: number): Vector2
-  add(v: any) {
+  public add(v: Vector2): Vector2
+  public add(n: number): Vector2
+  public add(v: any): Vector2 {
     return this.copy().addTo(v);
   }
 
-  subtractFrom(v: Vector2): Vector2
-  subtractFrom(n: number): Vector2
-  subtractFrom(a: any): Vector2 {
+  public subtractFrom(v: Vector2): Vector2
+  public subtractFrom(n: number): Vector2
+  public subtractFrom(a: any): Vector2 {
     if (a instanceof Vector2) {
       this.x -= a.x;
       this.y -= a.y;
@@ -65,15 +65,15 @@ export default class Vector2 {
     return this;
   }
 
-  subtract(v: Vector2): Vector2
-  subtract(n: number): Vector2
-  subtract(v: any) {
+  public subtract(v: Vector2): Vector2
+  public subtract(n: number): Vector2
+  public subtract(v: any): Vector2 {
     return this.copy().subtractFrom(v);
   }
 
-  divideBy(v: Vector2): Vector2
-  divideBy(n: number): Vector2
-  divideBy(a: any): Vector2 {
+  public divideBy(v: Vector2): Vector2
+  public divideBy(n: number): Vector2
+  public divideBy(a: any): Vector2 {
     if (a instanceof Vector2) {
       this.x /= a.x;
       this.y /= a.y;
@@ -85,15 +85,15 @@ export default class Vector2 {
     return this;
   }
 
-  divide(v: Vector2): Vector2
-  divide(n: number): Vector2
-  divide(a: any) {
+  public divide(v: Vector2): Vector2
+  public divide(n: number): Vector2
+  public divide(a: any): Vector2 {
     return this.copy().divideBy(a);
   }
 
-  multiplyWith(v: Vector2): Vector2
-  multiplyWith(n: number): Vector2
-  multiplyWith(a: any): Vector2 {
+  public multiplyWith(v: Vector2): Vector2
+  public multiplyWith(n: number): Vector2
+  public multiplyWith(a: any): Vector2 {
     if (a instanceof Vector2) {
       this.x *= a.x;
       this.y *= a.y;
@@ -105,21 +105,21 @@ export default class Vector2 {
     return this;
   }
 
-  multiply(v: Vector2): Vector2
-  multiply(n: number): Vector2
-  multiply(a: any) {
+  public multiply(v: Vector2): Vector2
+  public multiply(n: number): Vector2
+  public multiply(a: any): Vector2 {
     return this.copy().multiplyWith(a);
   }
 
-  toString(): string {
+  public toString(): string {
     return "(" + this.x + ", " + this.y + ")";
   }
 
-  copy(): Vector2 {
+  public copy(): Vector2 {
     return new Vector2(this.x, this.y);
   }
 
-  equals(obj: Vector2): boolean {
+  public equals(obj: Vector2): boolean {
     return this.x === obj.x && this.y === obj.y;
   }
 

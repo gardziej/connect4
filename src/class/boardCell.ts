@@ -9,7 +9,7 @@ export default class BoardCell implements Drawable {
   public initPosition: Vector2;
   private speed: number = 10;
 
-  constructor(
+  public constructor(
     public board: Board,
     public position: Vector2,
     public width: number,
@@ -19,11 +19,11 @@ export default class BoardCell implements Drawable {
     this.initPosition = this.position;
   }
 
-  get cellSize(): number {
+  public get cellSize(): number {
     return this.board.cellSize;
   }
 
-  get stateSign(): string {
+  public get stateSign(): string {
     switch (this.state) {
       case CellState.Empty: return '_';
       case CellState.Player: return 'X';

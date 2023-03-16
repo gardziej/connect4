@@ -7,7 +7,7 @@ export default class Rectangle implements Drawable {
   public color: string = 'white';
   public rounds: number[] = [0, 0, 0, 0];
 
-  constructor(
+  public constructor(
     public position: Vector2,
     public width: number,
     public height: number,
@@ -33,7 +33,7 @@ export default class Rectangle implements Drawable {
     return Rectangle.containsPoint(this, p);
   }
 
-  static containsPoint(rec: Drawable, p: Vector2) {
+  public static containsPoint(rec: Drawable, p: Vector2): boolean {
     return p.x > rec.position.x && p.y > rec.position.y && p.x < rec.position.x + rec.width && p.y < rec.position.y + rec.height;
   }
 }

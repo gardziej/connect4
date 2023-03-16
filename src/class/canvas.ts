@@ -7,7 +7,7 @@ export default class Canvas {
   public canvas: HTMLCanvasElement;
   private canvasOffset: Vector2;
 
-  constructor(
+  public constructor(
     private id: string,
     public dim: Vector2 = Vector2.zero
   ) {
@@ -28,35 +28,35 @@ export default class Canvas {
     this.canvasOffset = new Vector2(this.canvas.offsetLeft, this.canvas.offsetTop);
   }
 
-  get width(): number {
+  public get width(): number {
     return this.canvas.width;
   }
 
-  get height(): number {
+  public get height(): number {
     return this.canvas.height;
   }
 
-  get offset(): Vector2 {
+  public get offset(): Vector2 {
     return this.canvasOffset;
   }
 
-  clear(): void {
+  public clear(): void {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  getBoundaries(): Boundaries {
+  public getBoundaries(): Boundaries {
     return new Boundaries(Vector2.zero, new Vector2(this.canvas.width, this.canvas.height));
   }
 
-  setDefaultCursor(): void {
+  public setDefaultCursor(): void {
     this.canvas.style.cursor = 'default';
   }
 
-  setPointerCursor(): void {
+  public setPointerCursor(): void {
     this.canvas.style.cursor = 'pointer';
   }
 
-  setMoveCursor(): void {
+  public setMoveCursor(): void {
     this.canvas.style.cursor = 'move';
   }
 

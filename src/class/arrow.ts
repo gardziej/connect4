@@ -7,7 +7,7 @@ export default class Arrow implements Drawable {
   public color: string = 'yellow';
   private marginTop: number = 25;
 
-  constructor(
+  public constructor(
     public position: Vector2,
     public width: number,
     public height: number

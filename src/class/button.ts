@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import { filter, takeUntil, tap } from "rxjs/operators";
+import { filter, takeUntil } from "rxjs/operators";
 import Clickable from "../interfaces/clickable.interface";
 import Drawable from "../interfaces/drawable.interface";
 import { mapMouseEventToPosition } from "../utils/rxjsHelpers";
@@ -14,7 +14,7 @@ export default class Button implements Drawable, Clickable {
   public background: Rectangle;
   public visible: boolean = false;
 
-  constructor(
+  public constructor(
     public position: Vector2,
     public width: number,
     public height: number,
@@ -25,12 +25,12 @@ export default class Button implements Drawable, Clickable {
     this.background.rounds = [5, 5, 5, 5];
   }
 
-  public hide() {
+  public hide(): void {
     this.visible = false;
     this.clickable = false;
   }
 
-  public show() {
+  public show(): void {
     this.visible = true;
     this.clickable = true;
   }
